@@ -30,6 +30,7 @@ header {
   width: 130px;
   border-radius: 4px;
   padding: 10px;
+  line-height:45px;
   text-align: center;
   font-weight: 700;
   font-size: 16px;
@@ -620,6 +621,7 @@ header .badges .badge {
 	width: 76%;
 	display: flex;
 	align-items: center;
+	cursor: pointer;
 }
 .notice__list .notice__list__itmes ul li:nth-child(3) {
 	width: 12%;
@@ -665,7 +667,6 @@ header .badges .badge {
 
 .notice_det_wrap .notice_det_inner ul.nmap li a {}
 
-
 /* 페이스북 아이콘 */
 /* 참고 => https://www.w3schools.com/howto/howto_css_social_media_buttons.asp */
 .fa {
@@ -693,11 +694,14 @@ header .badges .badge {
 }
 
 /* 목록 버튼 */
-.btn--list {
+.inner.bt--li {
 	
 }
 
-.inner.btn--li {
-	
+.btn.btn-list {
+	border: 2px solid ;
+	background: ;
 }
+
+
 

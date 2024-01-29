@@ -1,3 +1,4 @@
+<%@page import="java.sql.PreparedStatement"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!-- DB와 연결 -->
@@ -12,7 +13,7 @@
 <head>
 	  <meta charset="UTF-8">
 	  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	  <title>Starbucks Korea Coffee</title>
+	  <title>스타벅스 공지사항 상세내용</title>
 	  <!-- 파비콘 -->
 	  <link rel="icon" href="./img/favicon.ico" />
 	  <!-- reset.css -->
@@ -69,21 +70,86 @@
 		</div>
 	</section>
 	
+	<%
+		// 한글 처리
+		request.setCharacterEncoding("UTF-8");
+	
+		String num = request.getParameter("num");
+		
+		String JDBC_URL = "jdbc:oracle:thin:@localhost:1521:orcl";
+	  String USER = "jsp";
+	  String PASSWORD = "123456";
+		
+	  Connection conn = null; //디비 접속 성공시 접속 정보 저장
+	  Statement stmt = null; // 쿼리 R 실행문
+	  PreparedStatement pstmt = null; // 쿼리 실행문
+		ResultSet rs = null;
+		
+		Exception exception = null;
+		
+		String title = ""; 		// 공지사항 제목
+		String content = ""; 	// 공지사항 내용
+		String upTitle = ""; 		// 공지사항 윗글 제목
+		String dwonTitle = ""; 	// 공지사항 아랫글 제목
+		
+	  try {
+			// 0.
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+		
+			// 1. JDBC로 Oracle연결
+		  conn = DriverManager.getConnection(JDBC_URL, USER, PASSWORD);
+		  
+			// 2. BO_FREE 테이블에 선택한 글 조회수 1 올리기
+			String updatequery = "update BO_FREE SET HIT = HIT+1 WHERE NUM = ?";
+		 	pstmt = conn.prepareStatement(updatequery);
+		 	pstmt.setInt(1, Integer.parseInt(num));
+		 	
+		 	pstmt.executeUpdate();
+		 	
+		 	// 3-1. 읽기를 위해 Statment 생성
+		 	stmt = conn.createStatement();
+		 	
+		 	// 3-2. SQL 조회 쿼리 실행
+		 	rs = stmt.executeQuery("SELECT NUM, NAME, SUBJECT, CONTENT FROM BO_FREE WHERE NUM = " + num);
+		 	
+		 	// 3-3. SQL 조회 쿼리 가져온 데이터를 자바 String 변수 set
+		 	if(rs.next()) {
+		 		title = rs.getString("SUBJECT");
+		 		content = rs.getString("CONTENT");
+		 	}
+		 	
+		 	// 윗글
+		 	
+		 	rs = stmt.executeQuery("SELECT MIN(num) NUM, NAME, SUBJECT, CONTENT FROM BO_FREE WHERE NUM = " + num);
+		 	
+		 	// 아랫글
+		 	
+		 	rs = stmt.executeQuery("SELECT MAX(num)  NUM, NAME, SUBJECT, CONTENT FROM BO_FREE WHERE NUM = " + num);
+		 	
+		} catch(Exception e) {
+			exception = e;
+			e.printStackTrace();
+		} finally {
+			if (pstmt != null) try {pstmt.close();} catch(SQLException ex) {}
+			if (conn != null) try {conn.close();} catch(SQLException ex) {}
+		}
+	%>
+	
 	<!-- notice contents -->
 	<section>
 		<div class="inner notice_det_wrap">
 			<div class="notice_det_inner">
 				<ul class="nmap">
-					<li class="det__title">서비스 개선 및 서비스 점검 안내</li>
+					<li class="det__title"><%= title %></li>
 					
 					
 					<!-- facebook 아이콘 추가 -->
 					<li class="fa fa-facebook"><a href="https://www.facebook.com/?locale=ko_KR"></a></li>
 				</ul>
 			</div>
-			<div class="notice__contents">
 			
-				<p>안녕하세요. 스타벅스 코리아입니다. 보다 나은 서비스 제공을 위한 시스템 점검을 진행합니다.</p>
+			<div class="notice__contents">
+				<p><%= content %></p>
 			</div>
 		</div>
 	</section>
@@ -91,13 +157,18 @@
 	<!-- 목록 버튼 -->
 	<section>
 		<div class="inner btn--list">
-			<a href="./notice.jsp" class="btn--li">목록</a>
+			<a href="./notice.jsp" class="btn btn-li">목록</a>
 		</div>
 	</section>
 	
 	<!-- 윗글 & 아랫글 -->
 	<section>
-		<div class=""></div>
+		<div>
+			<div class="">윗글</div>
+			<div class=""></div>
+			<div class="">아랫글</div>
+			<div class=""></div>
+		</div>
 	</section>
 	
 </body>

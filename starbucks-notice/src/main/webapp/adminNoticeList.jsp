@@ -88,7 +88,7 @@
 		    function noticeDelete(noticeNum) {
 	    		if (confirm('정말 삭제하시겠습니까?')) {
 	    			location.href = "./adminNoticeDelete.jsp?num=" + noticeNum;
-	    		}
+	    		}tdl 
 	    	}
     </script>
     

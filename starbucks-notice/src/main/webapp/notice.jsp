@@ -77,11 +77,14 @@
 	  	<div class="notice__header">
 	  		<div class="notice__no">NO</div>
 	  		<div class="notice__title">제목</div>
-	  		<div class="notice__regdate">조회수</div>
-	  		<div class="notice__hit">날짜</div>
+	  		<div class="notice__regdate">날짜</div>
+	  		<div class="notice__hit">조회수</div>
 	  	</div>
 	  	<div class="notice__list__itmes">
 <%
+	// 한글 처리
+	request.setCharacterEncoding("UTF-8");
+	
 	String JDBC_URL = "jdbc:oracle:thin:@localhost:1521:orcl";
   String USER = "jsp";
   String PASSWORD = "123456";
@@ -109,7 +112,7 @@
 %>
 						<ul>
 							<li><%= rs.getInt("NUM") %></li>
-							<li class="title"><a href="./notice-detail.jsp?num=<%= rs.getInt("NUM") %>"><%= rs.getString("SUBJECT") %></a></li>
+							<li><a href="./notice-detail.jsp?num=<%= rs.getInt("NUM") %>"><%= rs.getString("SUBJECT") %></a></li>
 							<li> <%= rs.getString("REGDATE").substring(0, 10) %></li>
 							<li><%= rs.getInt("HIT") %></li>
 						</ul>
